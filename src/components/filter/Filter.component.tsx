@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 import { useAppDispatch } from '../../app/hooks'
 import { getUserQuery } from '../../app/features/filteredMoviesSlice'
 
 import * as S from './Filter.styled'
+import { Loading } from '../loading/Loading.Styled'
 
 interface Props {
   categories: string[]
@@ -39,20 +40,24 @@ const Filters = ({ categories }: Props) => {
   return (
     <S.Container>
       <S.Content show={click}>
-        {categories.map((pastille, idx) => (
-          <div key={idx}>
-            <label htmlFor={pastille}>{pastille}</label>
-            <input
-              type='checkbox'
-              value={pastille}
-              name={pastille}
-              checked={isOptionChecked[idx]}
-              onChange={() => {
-                handleOptions(idx, pastille)
-              }}
-            />
-          </div>
-        ))}
+        {!categories.length ? (
+          <Loading />
+        ) : (
+          categories.map((pastille, idx) => (
+            <div key={idx}>
+              <label htmlFor={pastille}>{pastille}</label>
+              <input
+                type='checkbox'
+                value={pastille}
+                name={pastille}
+                checked={isOptionChecked[idx]}
+                onChange={() => {
+                  handleOptions(idx, pastille)
+                }}
+              />
+            </div>
+          ))
+        )}
       </S.Content>
       <S.Button onClick={() => setClick(!click)}>
         {click ? 'Close' : 'Open filters'}
