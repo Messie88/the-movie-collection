@@ -27,11 +27,13 @@ function App() {
       let listMovies: any = await movies$
       let response = await listMovies
 
-      if (!movies) dispatch(getFilteredMovies(response))
+      if (movies.length === 0) dispatch(getFilteredMovies(response))
     }
 
     fetchedMovies()
   }, [movies])
+
+  console.log(movies)
 
   // Make movies categories redendancy free
   const moviesCategoriesRedendancyFree: string[] = Array.from(
