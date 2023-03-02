@@ -8,7 +8,7 @@ import * as S from './CardList.styled'
 import Loading from '../loading'
 
 interface Props {
-  list?: Movie[]
+  list: Movie[]
 }
 
 const CardList = ({ list }: Props) => {
@@ -16,7 +16,7 @@ const CardList = ({ list }: Props) => {
 
   return (
     <S.Container>
-      {!list?.length ? (
+      {!list.length ? (
         <Loading />
       ) : (
         list?.map((item: Movie, index) => (

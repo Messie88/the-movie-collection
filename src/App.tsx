@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 
 import { movies$ } from './app/data/movies'
 import { Movie } from './app/types/movie'
@@ -18,8 +18,8 @@ import {
 import './App.css'
 
 function App() {
-  let [movies, setMovies] = useState<Movie[]>()
-  let [moviesCategories, setMoviesCategories] = useState<string[]>([])
+  let movies: Movie[] = useAppSelector(selectMovies)
+  let moviesCategories = movies.map((movie: Movie) => movie.category)
   const dispatch = useAppDispatch()
 
   useEffect(() => {
@@ -27,24 +27,11 @@ function App() {
       let listMovies: any = await movies$
       let response = await listMovies
 
-      if (!movies) setMovies(response)
-      dispatch(getFilteredMovies(response))
-      // Retreive movies categories
-      response.map((movie: Movie) =>
-        setMoviesCategories((prev) => [...prev, movie.category])
-      )
+      if (!movies) dispatch(getFilteredMovies(response))
     }
 
     fetchedMovies()
-  }, [])
-
-  let filtered = useAppSelector(selectMovies)
-
-  useEffect(() => {
-    if (filtered) {
-      setMovies(filtered)
-    }
-  }, [filtered])
+  }, [movies])
 
   // Make movies categories redendancy free
   const moviesCategoriesRedendancyFree: string[] = Array.from(
@@ -58,7 +45,7 @@ function App() {
       <h3 id='title'>THE MOVIE COLLECTION</h3>
       <div id='content'>
         <Filter categories={moviesCategoriesRedendancyFree} />
-        <CardList list={filteredData ? filteredData : movies} />
+        <CardList list={filteredData} />
       </div>
     </>
   )

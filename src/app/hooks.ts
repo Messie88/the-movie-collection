@@ -9,39 +9,31 @@ export const useAppDispatch: () => AppDispatch = useDispatch
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
 
 // FILTER CUSTOM HOOK
-
-export const useMoviesFilteringMethod = (movies: Movie[] | undefined) => {
+export const useMoviesFilteringMethod = (movies: Movie[]) => {
   const userQuery = useAppSelector(selectMoviesFilteredCategories)
-  const [filteredData, setFilteredData] = useState<Movie[] | undefined>(movies)
+  const [filteredData, setFilteredData] = useState<Movie[]>(movies)
+
+  const filtered = movies.filter(function (item: { [x: string]: any }) {
+    return Array.isArray(userQuery) && userQuery.length !== 0
+      ? userQuery?.some(function (key) {
+          if (
+            typeof item.category === 'string' &&
+            item.category.includes(key)
+          ) {
+            return true
+          }
+          return false
+        })
+      : typeof userQuery === 'string' && item.category.includes(userQuery)
+  })
 
   useEffect(() => {
-    const filtered = movies?.filter(function (item: { [x: string]: any }) {
-      return Array.isArray(userQuery) && userQuery.length !== 0
-        ? userQuery?.some(function (key) {
-            if (
-              typeof item.category === 'string' &&
-              item.category.includes(key)
-            ) {
-              return true
-            }
-            return false
-          })
-        : typeof userQuery === 'string' && item.category.includes(userQuery)
-    })
-
-    if (filtered && filtered.length > 0) {
+    if (filtered.length > 0) {
       setFilteredData(filtered)
-    } else if (
-      userQuery &&
-      userQuery.length > 0 &&
-      filtered &&
-      filtered.length === 0
-    ) {
-      setFilteredData(undefined)
     } else {
       setFilteredData(movies)
     }
-  }, [userQuery])
+  }, [filtered])
 
   return filteredData
 }
